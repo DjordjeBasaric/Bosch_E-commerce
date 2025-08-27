@@ -26,7 +26,14 @@ public class ApiExceptionFactory {
         return new ApiException("Cart not found", HttpStatus.NOT_FOUND);
     }
 
+    public static ApiException cartItemNotFound() {
+        return new ApiException("Cart item not found", HttpStatus.NOT_FOUND);
+    }
+
     public static ApiException invalidQuantity() {
         return new ApiException("Quantity must be 1 or more", HttpStatus.BAD_REQUEST);
     }
+
+
+
 }

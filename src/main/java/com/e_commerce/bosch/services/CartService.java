@@ -7,6 +7,7 @@ import com.e_commerce.bosch.entities.Cart;
 import com.e_commerce.bosch.entities.CartItem;
 import com.e_commerce.bosch.entities.Product;
 import com.e_commerce.bosch.exceptions.ApiExceptionFactory;
+import com.e_commerce.bosch.mappers.CartMapper;
 import com.e_commerce.bosch.repositories.CartItemRepository;
 import com.e_commerce.bosch.repositories.CartRepository;
 import com.e_commerce.bosch.repositories.ProductRepository;
@@ -29,7 +30,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
 
     @Transactional
-    public void addItemToCart(Long userId, Long productId) {
+    public Void addItemToCart(Long userId, Long productId) {
 
         Product product = productRepository.findById(productId).orElseThrow(ApiExceptionFactory::productNotFound);
 
@@ -40,6 +41,8 @@ public class CartService {
         cartItem.setQuantity(cartItem.getQuantity()+1);
 
         cartItemRepository.save(cartItem);
+
+        return null;
     }
 
 
@@ -65,7 +68,7 @@ public class CartService {
     }
 
     @Transactional
-    public void updateCartItemQuantity(Long userId, Long productId, Integer quantity) {
+    public Void updateCartItemQuantity(Long userId, Long productId, Integer quantity) {
 
         if (quantity < 1) throw ApiExceptionFactory.invalidQuantity();
 
@@ -78,34 +81,29 @@ public class CartService {
         cartItem.setQuantity(quantity);
 
         cartItemRepository.save(cartItem);
+
+        return null;
     }
 
+    @Transactional
     public CartDTO getCartItemsByUserId(Long userId) {
-        Cart cart = cartRepository.findById(userId).orElseThrow(ApiExceptionFactory::productNotFound);
-
-        return cartEntityToCartDTO(cart);
+        Cart cart = cartRepository.findByUserIdFetchAll(userId)
+                                    .orElseThrow(ApiExceptionFactory::cartNotFound);
+        return CartMapper.cartEntityToCartDTO(cart);
     }
 
-    private CartDTO cartEntityToCartDTO(Cart cart) {
+    @Transactional
+    public Void deleteCartItem(Long userId, Long productId) {
+        Cart cart = cartRepository.findByUserId(userId)
+                .orElseThrow(ApiExceptionFactory::cartNotFound);
 
-        List<CartItemDTO> cartItemDTOS = new ArrayList<>();
-        for (CartItem cartItem : cart.getItems()) {
-            cartItemDTOS.add(cartItemToCartItemDTO(cartItem));
-        }
+        CartItem cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
+                .orElseThrow(ApiExceptionFactory::cartItemNotFound);
 
-        return CartDTO.builder()
-                .id(cart.getId())
-                .userId(cart.getUserId())
-                .items(cartItemDTOS)
-                .build();
+        cartItemRepository.delete(cartItem);
+
+        return null;
     }
 
-    private CartItemDTO cartItemToCartItemDTO(CartItem cartItem) {
-        return CartItemDTO.builder()
-                .id(cartItem.getId())
-                .quantity(cartItem.getQuantity())
-                .unitPrice(cartItem.getUnitPrice())
-                .product(ProductService.productEntityToProductDTO(cartItem.getProduct()))
-                .build();
-    }
+
 }

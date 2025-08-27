@@ -19,9 +19,9 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/{productId}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable @Positive Long productId) {
-        return ResponseEntity.ok(productService.getProductById(productId));
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable @Positive Long id) {
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @GetMapping
@@ -36,4 +36,5 @@ public class ProductController {
             ) {
         return ResponseEntity.ok(productService.getAllProducts(page, size, sortBy, direction, search, priceMin, priceMax));
     }
+
 }
