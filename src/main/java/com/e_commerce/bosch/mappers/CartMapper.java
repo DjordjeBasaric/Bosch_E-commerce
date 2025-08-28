@@ -22,7 +22,6 @@ public class CartMapper {
 
         return CartDTO.builder()
                 .id(cart.getId())
-                .userId(cart.getUserId())
                 .items(cartItemDTOS)
                 .build();
     }

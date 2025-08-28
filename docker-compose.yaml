@@ -1,7 +1,6 @@
-version: '3.9'
+version: "3.9"
 
 services:
-
   db:
     container_name: ecommerce
     image: postgres:latest
@@ -13,6 +12,30 @@ services:
       POSTGRES_DB: ecommerce
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce_app
+    environment:
+
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommerce
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+
+      SERVER_PORT: ${SERVER_PORT:-8080}
+
+      # Opciono: JVM flagovi
+      JAVA_OPTS: ${JAVA_OPTS:-}
+    ports:
+
+      - "${APP_PORT:-8080}:${SERVER_PORT:-8080}"
+    depends_on:
+      - db
+
+    restart: unless-stopped
 
 volumes:
   postgres_data:

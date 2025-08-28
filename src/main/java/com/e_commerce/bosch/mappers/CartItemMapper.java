@@ -3,7 +3,6 @@ package com.e_commerce.bosch.mappers;
 
 import com.e_commerce.bosch.dtos.CartItemDTO;
 import com.e_commerce.bosch.entities.CartItem;
-import com.e_commerce.bosch.services.ProductService;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass

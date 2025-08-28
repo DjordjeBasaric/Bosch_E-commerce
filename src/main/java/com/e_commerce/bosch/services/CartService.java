@@ -30,7 +30,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
 
     @Transactional
-    public Void addItemToCart(Long userId, Long productId) {
+    public void addItemToCart(Long userId, Long productId) {
 
         Product product = productRepository.findById(productId).orElseThrow(ApiExceptionFactory::productNotFound);
 
@@ -41,8 +41,6 @@ public class CartService {
         cartItem.setQuantity(cartItem.getQuantity()+1);
 
         cartItemRepository.save(cartItem);
-
-        return null;
     }
 
 
@@ -50,7 +48,6 @@ public class CartService {
         return cartRepository.findByUserId(userId)
                     .orElseGet(() -> cartRepository.save(
                             Cart.builder()
-                                    .userId(userId)
                                     .items(new ArrayList<>())
                                     .build()));
     }
@@ -68,7 +65,7 @@ public class CartService {
     }
 
     @Transactional
-    public Void updateCartItemQuantity(Long userId, Long productId, Integer quantity) {
+    public void updateCartItemQuantity(Long userId, Long productId, Integer quantity) {
 
         if (quantity < 1) throw ApiExceptionFactory.invalidQuantity();
 
@@ -81,8 +78,6 @@ public class CartService {
         cartItem.setQuantity(quantity);
 
         cartItemRepository.save(cartItem);
-
-        return null;
     }
 
     @Transactional
@@ -93,7 +88,7 @@ public class CartService {
     }
 
     @Transactional
-    public Void deleteCartItem(Long userId, Long productId) {
+    public void deleteCartItem(Long userId, Long productId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(ApiExceptionFactory::cartNotFound);
 
@@ -101,8 +96,6 @@ public class CartService {
                 .orElseThrow(ApiExceptionFactory::cartItemNotFound);
 
         cartItemRepository.delete(cartItem);
-
-        return null;
     }
 
 

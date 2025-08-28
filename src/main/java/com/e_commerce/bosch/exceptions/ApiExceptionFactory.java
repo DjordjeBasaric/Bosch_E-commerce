@@ -34,6 +34,15 @@ public class ApiExceptionFactory {
         return new ApiException("Quantity must be 1 or more", HttpStatus.BAD_REQUEST);
     }
 
+    public static ApiException usernameAlredyTaken() {
+        return new ApiException("Username already taken", HttpStatus.CONFLICT);
+    }
 
+    public static ApiException userNotFound() {
+        return new ApiException("User with that credentials not found", HttpStatus.NOT_FOUND);
+    }
 
+    public static ApiException invalidCredentials() {
+        return new ApiException("Invalid credentials", HttpStatus.BAD_REQUEST);
+    }
 }
